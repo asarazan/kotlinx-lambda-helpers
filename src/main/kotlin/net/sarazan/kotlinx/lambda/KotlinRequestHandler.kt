@@ -12,17 +12,17 @@ import java.io.InputStream
 import java.io.OutputStream
 import kotlin.reflect.KClass
 
+private val json = Json {
+    isLenient = true
+    ignoreUnknownKeys = true
+}
+
 inline fun<reified I : Any, O: Any> requestHandler(crossinline fn: suspend (I, Context) -> O): KotlinRequestHandler<I, O> {
     return object : KotlinRequestHandler<I, O>(I::class) {
         override suspend fun onRequest(input: I, context: Context): O {
             return fn(input, context)
         }
     }
-}
-
-internal val json = Json {
-    isLenient = true
-    ignoreUnknownKeys = true
 }
 
 abstract class KotlinRequestHandler<I : Any, O : Any>(
